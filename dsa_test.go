@@ -10,7 +10,7 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/codahale/rfc6979"
+	"github.com/nspcc-dev/rfc6979"
 )
 
 type dsaFixture struct {
