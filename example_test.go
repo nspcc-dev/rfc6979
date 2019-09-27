@@ -27,11 +27,7 @@ func ExampleSignECDSA() {
 	hash := alg.Sum(nil)
 
 	// Sign the message. You don't need a PRNG for this.
-	r, s, err := SignECDSA(k, hash, sha512.New)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	r, s := SignECDSA(k, hash, sha512.New)
 
 	if !ecdsa.Verify(&k.PublicKey, hash, r, s) {
 		fmt.Println("Invalid signature!")
@@ -45,7 +41,10 @@ func ExampleSignDSA() {
 	// Here I'm generating some DSA params, but you should really pre-generate
 	// these and re-use them, since this takes a long time and isn't necessary.
 	k := new(dsa.PrivateKey)
-	dsa.GenerateParameters(&k.Parameters, rand.Reader, dsa.L1024N160)
+	if err := dsa.GenerateParameters(&k.Parameters, rand.Reader, dsa.L1024N160); err != nil {
+		fmt.Println(err)
+		return
+	}
 
 	// Generate a key pair.
 	// You need a high-quality PRNG for this.

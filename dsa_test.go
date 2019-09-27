@@ -59,7 +59,7 @@ var dsa2048 = &dsaKey{
 var dsaFixtures = []dsaFixture{
 	// DSA, 1024 Bits
 	// https://tools.ietf.org/html/rfc6979#appendix-A.2.1
-	dsaFixture{
+	{
 		name:    "1024/SHA-1 #1",
 		key:     dsa1024,
 		alg:     sha1.New,
@@ -67,7 +67,7 @@ var dsaFixtures = []dsaFixture{
 		r:       "2E1A0C2562B2912CAAF89186FB0F42001585DA55",
 		s:       "29EFB6B0AFF2D7A68EB70CA313022253B9A88DF5",
 	},
-	dsaFixture{
+	{
 		name:    "1024/SHA-224 #1",
 		key:     dsa1024,
 		alg:     sha256.New224,
@@ -75,7 +75,7 @@ var dsaFixtures = []dsaFixture{
 		r:       "4BC3B686AEA70145856814A6F1BB53346F02101E",
 		s:       "410697B92295D994D21EDD2F4ADA85566F6F94C1",
 	},
-	dsaFixture{
+	{
 		name:    "1024/SHA-256 #1",
 		key:     dsa1024,
 		alg:     sha256.New,
@@ -83,7 +83,7 @@ var dsaFixtures = []dsaFixture{
 		r:       "81F2F5850BE5BC123C43F71A3033E9384611C545",
 		s:       "4CDD914B65EB6C66A8AAAD27299BEE6B035F5E89",
 	},
-	dsaFixture{
+	{
 		name:    "1024/SHA-384 #1",
 		key:     dsa1024,
 		alg:     sha512.New384,
@@ -91,7 +91,7 @@ var dsaFixtures = []dsaFixture{
 		r:       "07F2108557EE0E3921BC1774F1CA9B410B4CE65A",
 		s:       "54DF70456C86FAC10FAB47C1949AB83F2C6F7595",
 	},
-	dsaFixture{
+	{
 		name:    "1024/SHA-512 #1",
 		key:     dsa1024,
 		alg:     sha512.New,
@@ -99,7 +99,7 @@ var dsaFixtures = []dsaFixture{
 		r:       "16C3491F9B8C3FBBDD5E7A7B667057F0D8EE8E1B",
 		s:       "02C36A127A7B89EDBB72E4FFBC71DABC7D4FC69C",
 	},
-	dsaFixture{
+	{
 		name:    "1024/SHA-1 #2",
 		key:     dsa1024,
 		alg:     sha1.New,
@@ -107,7 +107,7 @@ var dsaFixtures = []dsaFixture{
 		r:       "42AB2052FD43E123F0607F115052A67DCD9C5C77",
 		s:       "183916B0230D45B9931491D4C6B0BD2FB4AAF088",
 	},
-	dsaFixture{
+	{
 		name:    "1024/SHA-224 #2",
 		key:     dsa1024,
 		alg:     sha256.New224,
@@ -115,7 +115,7 @@ var dsaFixtures = []dsaFixture{
 		r:       "6868E9964E36C1689F6037F91F28D5F2C30610F2",
 		s:       "49CEC3ACDC83018C5BD2674ECAAD35B8CD22940F",
 	},
-	dsaFixture{
+	{
 		name:    "1024/SHA-256 #2",
 		key:     dsa1024,
 		alg:     sha256.New,
@@ -123,7 +123,7 @@ var dsaFixtures = []dsaFixture{
 		r:       "22518C127299B0F6FDC9872B282B9E70D0790812",
 		s:       "6837EC18F150D55DE95B5E29BE7AF5D01E4FE160",
 	},
-	dsaFixture{
+	{
 		name:    "1024/SHA-384 #2",
 		key:     dsa1024,
 		alg:     sha512.New384,
@@ -131,7 +131,7 @@ var dsaFixtures = []dsaFixture{
 		r:       "854CF929B58D73C3CBFDC421E8D5430CD6DB5E66",
 		s:       "91D0E0F53E22F898D158380676A871A157CDA622",
 	},
-	dsaFixture{
+	{
 		name:    "1024/SHA-512 #2",
 		key:     dsa1024,
 		alg:     sha512.New,
@@ -142,7 +142,7 @@ var dsaFixtures = []dsaFixture{
 
 	// DSA, 2048 Bits
 	// https://tools.ietf.org/html/rfc6979#appendix-A.2.2
-	dsaFixture{
+	{
 		name:    "2048/SHA-1 #1",
 		key:     dsa2048,
 		alg:     sha1.New,
@@ -150,7 +150,7 @@ var dsaFixtures = []dsaFixture{
 		r:       "3A1B2DBD7489D6ED7E608FD036C83AF396E290DBD602408E8677DAABD6E7445A",
 		s:       "D26FCBA19FA3E3058FFC02CA1596CDBB6E0D20CB37B06054F7E36DED0CDBBCCF",
 	},
-	dsaFixture{
+	{
 		name:    "2048/SHA-224 #1",
 		key:     dsa2048,
 		alg:     sha256.New224,
@@ -158,7 +158,7 @@ var dsaFixtures = []dsaFixture{
 		r:       "DC9F4DEADA8D8FF588E98FED0AB690FFCE858DC8C79376450EB6B76C24537E2C",
 		s:       "A65A9C3BC7BABE286B195D5DA68616DA8D47FA0097F36DD19F517327DC848CEC",
 	},
-	dsaFixture{
+	{
 		name:    "2048/SHA-256 #1",
 		key:     dsa2048,
 		alg:     sha256.New,
@@ -166,7 +166,7 @@ var dsaFixtures = []dsaFixture{
 		r:       "EACE8BDBBE353C432A795D9EC556C6D021F7A03F42C36E9BC87E4AC7932CC809",
 		s:       "7081E175455F9247B812B74583E9E94F9EA79BD640DC962533B0680793A38D53",
 	},
-	dsaFixture{
+	{
 		name:    "2048/SHA-384 #1",
 		key:     dsa2048,
 		alg:     sha512.New384,
@@ -174,7 +174,7 @@ var dsaFixtures = []dsaFixture{
 		r:       "B2DA945E91858834FD9BF616EBAC151EDBC4B45D27D0DD4A7F6A22739F45C00B",
 		s:       "19048B63D9FD6BCA1D9BAE3664E1BCB97F7276C306130969F63F38FA8319021B",
 	},
-	dsaFixture{
+	{
 		name:    "2048/SHA-512 #1",
 		key:     dsa2048,
 		alg:     sha512.New,
@@ -182,7 +182,7 @@ var dsaFixtures = []dsaFixture{
 		r:       "2016ED092DC5FB669B8EFB3D1F31A91EECB199879BE0CF78F02BA062CB4C942E",
 		s:       "D0C76F84B5F091E141572A639A4FB8C230807EEA7D55C8A154A224400AFF2351",
 	},
-	dsaFixture{
+	{
 		name:    "2048/SHA-1 #2",
 		key:     dsa2048,
 		alg:     sha1.New,
@@ -190,7 +190,7 @@ var dsaFixtures = []dsaFixture{
 		r:       "C18270A93CFC6063F57A4DFA86024F700D980E4CF4E2CB65A504397273D98EA0",
 		s:       "414F22E5F31A8B6D33295C7539C1C1BA3A6160D7D68D50AC0D3A5BEAC2884FAA",
 	},
-	dsaFixture{
+	{
 		name:    "2048/SHA-224 #2",
 		key:     dsa2048,
 		alg:     sha256.New224,
@@ -198,7 +198,7 @@ var dsaFixtures = []dsaFixture{
 		r:       "272ABA31572F6CC55E30BF616B7A265312018DD325BE031BE0CC82AA17870EA3",
 		s:       "E9CC286A52CCE201586722D36D1E917EB96A4EBDB47932F9576AC645B3A60806",
 	},
-	dsaFixture{
+	{
 		name:    "2048/SHA-256 #2",
 		key:     dsa2048,
 		alg:     sha256.New,
@@ -206,7 +206,7 @@ var dsaFixtures = []dsaFixture{
 		r:       "8190012A1969F9957D56FCCAAD223186F423398D58EF5B3CEFD5A4146A4476F0",
 		s:       "7452A53F7075D417B4B013B278D1BB8BBD21863F5E7B1CEE679CF2188E1AB19E",
 	},
-	dsaFixture{
+	{
 		name:    "2048/SHA-384 #2",
 		key:     dsa2048,
 		alg:     sha512.New384,
@@ -214,7 +214,7 @@ var dsaFixtures = []dsaFixture{
 		r:       "239E66DDBE8F8C230A3D071D601B6FFBDFB5901F94D444C6AF56F732BEB954BE",
 		s:       "6BD737513D5E72FE85D1C750E0F73921FE299B945AAD1C802F15C26A43D34961",
 	},
-	dsaFixture{
+	{
 		name:    "2048/SHA-512 #2",
 		key:     dsa2048,
 		alg:     sha512.New,
