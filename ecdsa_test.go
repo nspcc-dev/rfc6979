@@ -428,12 +428,7 @@ func testEcsaFixture(f *ecdsaFixture, t *testing.T) {
 		digest = digest[0:g]
 	}
 
-	r, s, err := rfc6979.SignECDSA(f.key.key, digest, f.alg)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
+	r, s := rfc6979.SignECDSA(f.key.key, digest, f.alg)
 	expectedR := ecdsaLoadInt(f.r)
 	expectedS := ecdsaLoadInt(f.s)
 
