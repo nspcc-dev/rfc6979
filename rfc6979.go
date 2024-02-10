@@ -41,23 +41,7 @@ func bits2int(in []byte, qlen int) *big.Int {
 
 // https://tools.ietf.org/html/rfc6979#section-2.3.3
 func int2octets(v *big.Int, rolen int) []byte {
-	out := v.Bytes()
-
-	// pad with zeros if it's too short
-	if len(out) < rolen {
-		out2 := make([]byte, rolen)
-		copy(out2[rolen-len(out):], out)
-		return out2
-	}
-
-	// drop most significant bytes if it's too long
-	if len(out) > rolen {
-		out2 := make([]byte, rolen)
-		copy(out2, out[len(out)-rolen:])
-		return out2
-	}
-
-	return out
+	return v.FillBytes(make([]byte, rolen))
 }
 
 // https://tools.ietf.org/html/rfc6979#section-2.3.4

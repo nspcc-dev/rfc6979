@@ -14,6 +14,8 @@ import (
 // Note that FIPS 186-3 section 4.6 specifies that the hash should be truncated
 // to the byte-length of the subgroup. This function does not perform that
 // truncation itself.
+//
+// Will panic if invalid private key (>N for the curve) is passed.
 func SignECDSA(priv *ecdsa.PrivateKey, hash []byte, alg func() hash.Hash) (r, s *big.Int) {
 	c := priv.PublicKey.Curve
 	N := c.Params().N
