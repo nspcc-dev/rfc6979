@@ -47,10 +47,10 @@ func int2octets(v *big.Int, rolen int) []byte {
 // https://tools.ietf.org/html/rfc6979#section-2.3.4
 func bits2octets(in []byte, q *big.Int, qlen, rolen int) []byte {
 	z1 := bits2int(in, qlen)
-	z2 := new(big.Int).Sub(z1, q)
-	if z2.Sign() < 0 {
+	if z1.Cmp(q) < 0 {
 		return int2octets(z1, rolen)
 	}
+	z2 := new(big.Int).Sub(z1, q)
 	return int2octets(z2, rolen)
 }
 
