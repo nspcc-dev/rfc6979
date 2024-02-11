@@ -22,9 +22,18 @@ import (
 	"math/big"
 )
 
-// mac returns an HMAC of the given key and message.
-func mac(alg func() hash.Hash, k, m, buf []byte) []byte {
+// mac returns an HMAC result for the given key and message as well as
+// hmac hash instance itself (that can be reused for the same key after reset).
+func mac(alg func() hash.Hash, k, m, buf []byte) ([]byte, hash.Hash) {
 	h := hmac.New(alg, k)
+	h.Write(m)
+	return h.Sum(buf[:0]), h
+}
+
+// macReuse allows to reuse already initialized hmac for the next
+// message using the same key.
+func macReuse(h hash.Hash, m, buf []byte) []byte {
+	h.Reset()
 	h.Write(m)
 	return h.Sum(buf[:0])
 }
@@ -70,16 +79,16 @@ func generateSecret(q, x *big.Int, alg func() hash.Hash, hash []byte, test func(
 	k := bytes.Repeat([]byte{0x00}, holen)
 
 	// Step D
-	k = mac(alg, k, append(append(v, 0x00), bx...), k)
+	k, _ = mac(alg, k, append(append(v, 0x00), bx...), k)
 
 	// Step E
-	v = mac(alg, k, v, v)
+	v, h := mac(alg, k, v, v)
 
 	// Step F
-	k = mac(alg, k, append(append(v, 0x01), bx...), k)
+	k = macReuse(h, append(append(v, 0x01), bx...), k)
 
 	// Step G
-	v = mac(alg, k, v, v)
+	v, h = mac(alg, k, v, v)
 
 	// Step H
 	for {
@@ -88,7 +97,7 @@ func generateSecret(q, x *big.Int, alg func() hash.Hash, hash []byte, test func(
 
 		// Step H2
 		for len(t) < qlen/8 {
-			v = mac(alg, k, v, v)
+			v = macReuse(h, v, v)
 			t = append(t, v...)
 		}
 
@@ -97,7 +106,7 @@ func generateSecret(q, x *big.Int, alg func() hash.Hash, hash []byte, test func(
 		if secret.Cmp(one) >= 0 && secret.Cmp(q) < 0 && test(secret) {
 			return
 		}
-		k = mac(alg, k, append(v, 0x00), k)
-		v = mac(alg, k, v, v)
+		k, _ = mac(alg, k, append(v, 0x00), k)
+		v, h = mac(alg, k, v, v)
 	}
 }
