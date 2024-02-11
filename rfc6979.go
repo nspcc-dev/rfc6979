@@ -61,7 +61,7 @@ func bits2IntModQ(in []byte, q *big.Int, qlen int) *big.Int {
 var one = big.NewInt(1)
 
 // https://tools.ietf.org/html/rfc6979#section-3.2
-func generateSecret(q, x *big.Int, alg func() hash.Hash, hash []byte, test func(*big.Int) bool) {
+func generateSecret(q, x *big.Int, alg func() hash.Hash, hash []byte, test func(*big.Int, *big.Int) bool) {
 	qlen := q.BitLen()
 	holen := alg().Size()
 	rolen := (qlen + 7) >> 3
@@ -103,7 +103,7 @@ func generateSecret(q, x *big.Int, alg func() hash.Hash, hash []byte, test func(
 
 		// Step H3
 		secret := bits2int(t, qlen)
-		if secret.Cmp(one) >= 0 && secret.Cmp(q) < 0 && test(secret) {
+		if secret.Cmp(one) >= 0 && secret.Cmp(q) < 0 && test(secret, hashInt) {
 			return
 		}
 		k, _ = mac(alg, k, append(v, 0x00), k)

@@ -17,7 +17,7 @@ func TestGenerateSecret(t *testing.T) {
 
 	expected, _ := new(big.Int).SetString("23AF4074C90A02B3FE61D286D5C87F425E6BDD81B", 16)
 	var actual *big.Int
-	generateSecret(q, x, sha256.New, hash, func(k *big.Int) bool {
+	generateSecret(q, x, sha256.New, hash, func(k *big.Int, _ *big.Int) bool {
 		actual = k
 		return true
 	})
