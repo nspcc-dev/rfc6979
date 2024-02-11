@@ -43,7 +43,7 @@ func bits2int(in []byte, qlen int) *big.Int {
 	vlen := len(in) * 8
 	v := new(big.Int).SetBytes(in)
 	if vlen > qlen {
-		v = new(big.Int).Rsh(v, uint(vlen-qlen))
+		v.Rsh(v, uint(vlen-qlen))
 	}
 	return v
 }
