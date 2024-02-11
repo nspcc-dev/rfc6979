@@ -48,19 +48,14 @@ func bits2int(in []byte, qlen int) *big.Int {
 	return v
 }
 
-// https://tools.ietf.org/html/rfc6979#section-2.3.3
-func int2octets(v *big.Int, rolen int) []byte {
-	return v.FillBytes(make([]byte, rolen))
-}
-
-// https://tools.ietf.org/html/rfc6979#section-2.3.4
-func bits2octets(in []byte, q *big.Int, qlen, rolen int) []byte {
+// bits2IntModQ implements an integer part of bits2octets defined
+// in https://tools.ietf.org/html/rfc6979#section-2.3.4
+func bits2IntModQ(in []byte, q *big.Int, qlen int) *big.Int {
 	z1 := bits2int(in, qlen)
 	if z1.Cmp(q) < 0 {
-		return int2octets(z1, rolen)
+		return z1
 	}
-	z2 := new(big.Int).Sub(z1, q)
-	return int2octets(z2, rolen)
+	return z1.Sub(z1, q)
 }
 
 var one = big.NewInt(1)
@@ -70,7 +65,12 @@ func generateSecret(q, x *big.Int, alg func() hash.Hash, hash []byte, test func(
 	qlen := q.BitLen()
 	holen := alg().Size()
 	rolen := (qlen + 7) >> 3
-	bx := append(int2octets(x, rolen), bits2octets(hash, q, qlen, rolen)...)
+
+	var bx = make([]byte, 2*rolen)
+	x.FillBytes(bx[:rolen]) // int2octets per https://tools.ietf.org/html/rfc6979#section-2.3.3
+
+	var hashInt = bits2IntModQ(hash, q, qlen)
+	hashInt.FillBytes(bx[rolen:]) // int2octets per https://tools.ietf.org/html/rfc6979#section-2.3.3
 
 	// Step B
 	v := bytes.Repeat([]byte{0x01}, holen)
