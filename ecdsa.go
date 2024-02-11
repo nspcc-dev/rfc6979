@@ -16,13 +16,14 @@ func SignECDSA(priv *ecdsa.PrivateKey, hash []byte, alg func() hash.Hash) (r, s 
 	N := c.Params().N
 
 	generateSecret(N, priv.D, alg, hash, func(k *big.Int, e *big.Int) bool {
-		inv := new(big.Int).ModInverse(k, N)
 		r, _ = priv.Curve.ScalarBaseMult(k.Bytes())
 		r.Mod(r, N)
 
 		if r.Sign() == 0 {
 			return false
 		}
+
+		inv := k.ModInverse(k, N)
 
 		s = new(big.Int).Mul(priv.D, r)
 		s.Add(s, e)

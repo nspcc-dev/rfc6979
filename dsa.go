@@ -18,13 +18,14 @@ func SignDSA(priv *dsa.PrivateKey, hash []byte, alg func() hash.Hash) (r, s *big
 	n >>= 3
 
 	generateSecret(priv.Q, priv.X, alg, hash, func(k *big.Int, z *big.Int) bool {
-		inv := new(big.Int).ModInverse(k, priv.Q)
 		r = new(big.Int).Exp(priv.G, k, priv.P)
 		r.Mod(r, priv.Q)
 
 		if r.Sign() == 0 {
 			return false
 		}
+
+		inv := k.ModInverse(k, priv.Q)
 
 		s = new(big.Int).Mul(priv.X, r)
 		s.Add(s, z)
