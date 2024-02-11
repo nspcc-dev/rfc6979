@@ -73,7 +73,10 @@ func generateSecret(q, x *big.Int, alg func() hash.Hash, hash []byte, test func(
 	hashInt.FillBytes(bx[rolen:]) // int2octets per https://tools.ietf.org/html/rfc6979#section-2.3.3
 
 	// Step B
-	v := bytes.Repeat([]byte{0x01}, holen)
+	var v = make([]byte, holen, holen+1+len(bx)) // see appends below
+	for i := 0; i < holen; i++ {
+		v[i] = 0x01
+	}
 
 	// Step C
 	k := bytes.Repeat([]byte{0x00}, holen)
