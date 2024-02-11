@@ -15,8 +15,9 @@ func SignECDSA(priv *ecdsa.PrivateKey, hash []byte, alg func() hash.Hash) (r, s 
 	c := priv.PublicKey.Curve
 	N := c.Params().N
 
-	generateSecret(N, priv.D, alg, hash, func(k *big.Int, e *big.Int) bool {
-		r, _ = priv.Curve.ScalarBaseMult(k.Bytes())
+	generateSecret(N, priv.D, alg, hash, func(k *big.Int, e *big.Int, t []byte) bool {
+		k.FillBytes(t)
+		r, _ = priv.Curve.ScalarBaseMult(t)
 		r.Mod(r, N)
 
 		if r.Sign() == 0 {
