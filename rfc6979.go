@@ -22,9 +22,18 @@ import (
 	"math/big"
 )
 
-// mac returns an HMAC of the given key and message.
-func mac(alg func() hash.Hash, k, m, buf []byte) []byte {
+// mac returns an HMAC result for the given key and message as well as
+// hmac hash instance itself (that can be reused for the same key after reset).
+func mac(alg func() hash.Hash, k, m, buf []byte) ([]byte, hash.Hash) {
 	h := hmac.New(alg, k)
+	h.Write(m)
+	return h.Sum(buf[:0]), h
+}
+
+// macReuse allows to reuse already initialized hmac for the next
+// message using the same key.
+func macReuse(h hash.Hash, m, buf []byte) []byte {
+	h.Reset()
 	h.Write(m)
 	return h.Sum(buf[:0])
 }
@@ -34,86 +43,73 @@ func bits2int(in []byte, qlen int) *big.Int {
 	vlen := len(in) * 8
 	v := new(big.Int).SetBytes(in)
 	if vlen > qlen {
-		v = new(big.Int).Rsh(v, uint(vlen-qlen))
+		v.Rsh(v, uint(vlen-qlen))
 	}
 	return v
 }
 
-// https://tools.ietf.org/html/rfc6979#section-2.3.3
-func int2octets(v *big.Int, rolen int) []byte {
-	out := v.Bytes()
-
-	// pad with zeros if it's too short
-	if len(out) < rolen {
-		out2 := make([]byte, rolen)
-		copy(out2[rolen-len(out):], out)
-		return out2
-	}
-
-	// drop most significant bytes if it's too long
-	if len(out) > rolen {
-		out2 := make([]byte, rolen)
-		copy(out2, out[len(out)-rolen:])
-		return out2
-	}
-
-	return out
-}
-
-// https://tools.ietf.org/html/rfc6979#section-2.3.4
-func bits2octets(in []byte, q *big.Int, qlen, rolen int) []byte {
+// bits2IntModQ implements an integer part of bits2octets defined
+// in https://tools.ietf.org/html/rfc6979#section-2.3.4
+func bits2IntModQ(in []byte, q *big.Int, qlen int) *big.Int {
 	z1 := bits2int(in, qlen)
-	z2 := new(big.Int).Sub(z1, q)
-	if z2.Sign() < 0 {
-		return int2octets(z1, rolen)
+	if z1.Cmp(q) < 0 {
+		return z1
 	}
-	return int2octets(z2, rolen)
+	return z1.Sub(z1, q)
 }
 
 var one = big.NewInt(1)
 
 // https://tools.ietf.org/html/rfc6979#section-3.2
-func generateSecret(q, x *big.Int, alg func() hash.Hash, hash []byte, test func(*big.Int) bool) {
+func generateSecret(q, x *big.Int, alg func() hash.Hash, hash []byte, test func(*big.Int, *big.Int, []byte) bool) {
 	qlen := q.BitLen()
 	holen := alg().Size()
 	rolen := (qlen + 7) >> 3
-	bx := append(int2octets(x, rolen), bits2octets(hash, q, qlen, rolen)...)
+
+	var bx = make([]byte, 2*rolen)
+	x.FillBytes(bx[:rolen]) // int2octets per https://tools.ietf.org/html/rfc6979#section-2.3.3
+
+	var hashInt = bits2IntModQ(hash, q, qlen)
+	hashInt.FillBytes(bx[rolen:]) // int2octets per https://tools.ietf.org/html/rfc6979#section-2.3.3
 
 	// Step B
-	v := bytes.Repeat([]byte{0x01}, holen)
+	var v = make([]byte, holen, holen+1+len(bx)) // see appends below
+	for i := 0; i < holen; i++ {
+		v[i] = 0x01
+	}
 
 	// Step C
 	k := bytes.Repeat([]byte{0x00}, holen)
 
 	// Step D
-	k = mac(alg, k, append(append(v, 0x00), bx...), k)
+	k, _ = mac(alg, k, append(append(v, 0x00), bx...), k)
 
 	// Step E
-	v = mac(alg, k, v, v)
+	v, h := mac(alg, k, v, v)
 
 	// Step F
-	k = mac(alg, k, append(append(v, 0x01), bx...), k)
+	k = macReuse(h, append(append(v, 0x01), bx...), k)
 
 	// Step G
-	v = mac(alg, k, v, v)
+	v, h = mac(alg, k, v, v)
 
 	// Step H
+	var t = make([]byte, qlen/8)
 	for {
 		// Step H1
-		var t []byte
-
+		t = t[:0]
 		// Step H2
 		for len(t) < qlen/8 {
-			v = mac(alg, k, v, v)
+			v = macReuse(h, v, v)
 			t = append(t, v...)
 		}
 
 		// Step H3
 		secret := bits2int(t, qlen)
-		if secret.Cmp(one) >= 0 && secret.Cmp(q) < 0 && test(secret) {
+		if secret.Cmp(one) >= 0 && secret.Cmp(q) < 0 && test(secret, hashInt, t) {
 			return
 		}
-		k = mac(alg, k, append(v, 0x00), k)
-		v = mac(alg, k, v, v)
+		k, _ = mac(alg, k, append(v, 0x00), k)
+		v, h = mac(alg, k, v, v)
 	}
 }
