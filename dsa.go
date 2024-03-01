@@ -15,7 +15,6 @@ func SignDSA(priv *dsa.PrivateKey, hash []byte, alg func() hash.Hash) (r, s *big
 		err = dsa.ErrInvalidPublicKey
 		return
 	}
-	n >>= 3
 
 	generateSecret(priv.Q, priv.X, alg, hash, func(k *big.Int, z *big.Int, _ []byte) bool {
 		r = new(big.Int).Exp(priv.G, k, priv.P)
