@@ -1,7 +1,7 @@
 package rfc6979
 
 import (
-	"crypto/dsa"
+	"crypto/dsa" //nolint:staticcheck
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
