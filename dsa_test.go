@@ -1,7 +1,7 @@
 package rfc6979_test
 
 import (
-	"crypto/dsa"
+	"crypto/dsa" //nolint:staticcheck
 	"crypto/sha1"
 	"crypto/sha256"
 	"crypto/sha512"

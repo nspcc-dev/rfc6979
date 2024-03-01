@@ -1,7 +1,7 @@
 package rfc6979
 
 import (
-	"crypto/dsa"
+	"crypto/dsa" //nolint:staticcheck
 	"hash"
 	"math/big"
 )
@@ -9,6 +9,9 @@ import (
 // SignDSA signs an arbitrary length hash (which should be the result of hashing
 // a larger message) using the private key, priv. It returns the signature as a
 // pair of integers.
+//
+// Deprecated: crypto/dsa package is deprecated in Go, so please swtich to ECDSA.
+// This method can be removed in future versions.
 func SignDSA(priv *dsa.PrivateKey, hash []byte, alg func() hash.Hash) (r, s *big.Int, err error) {
 	n := priv.Q.BitLen()
 	if n&7 != 0 {
