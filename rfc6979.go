@@ -16,7 +16,6 @@ Provides functions similar to crypto/dsa and crypto/ecdsa.
 package rfc6979
 
 import (
-	"bytes"
 	"crypto/hmac"
 	"hash"
 	"math/big"
@@ -79,7 +78,7 @@ func generateSecret(q, x *big.Int, alg func() hash.Hash, hash []byte, test func(
 	}
 
 	// Step C
-	k := bytes.Repeat([]byte{0x00}, holen)
+	k := make([]byte, holen)
 
 	// Step D
 	k, _ = mac(alg, k, append(append(v, 0x00), bx...), k)
