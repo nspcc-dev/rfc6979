@@ -73,7 +73,7 @@ func generateSecret(q, x *big.Int, alg func() hash.Hash, hash []byte, test func(
 
 	// Step B
 	var v = make([]byte, holen, holen+1+len(bx)) // see appends below
-	for i := 0; i < holen; i++ {
+	for i := range holen {
 		v[i] = 0x01
 	}
 
