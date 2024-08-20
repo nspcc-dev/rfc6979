@@ -12,7 +12,7 @@ func BenchmarkECDSASign(b *testing.B) {
 
 	h := sha256.Sum256([]byte(msg))
 	b.ResetTimer()
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		_, _ = rfc6979.SignECDSA(p256.key, h[:], sha256.New)
 	}
 }
