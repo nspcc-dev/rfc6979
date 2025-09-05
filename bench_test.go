@@ -1,6 +1,7 @@
 package rfc6979_test
 
 import (
+	"crypto"
 	"crypto/sha256"
 	"testing"
 
@@ -11,8 +12,18 @@ func BenchmarkECDSASign(b *testing.B) {
 	const msg = "Hello world!"
 
 	h := sha256.Sum256([]byte(msg))
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		_, _ = rfc6979.SignECDSA(p256.key, h[:], sha256.New)
+	}
+}
+
+func BenchmarkECDSACore(b *testing.B) {
+	const msg = "Hello world!"
+
+	h := sha256.Sum256([]byte(msg))
+
+	for b.Loop() {
+		_, _ = p256.key.Sign(nil, h[:], crypto.SHA256)
 	}
 }
