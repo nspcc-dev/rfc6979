@@ -12,12 +12,12 @@ import (
 //
 // Will panic if invalid private key (>N for the curve) is passed.
 func SignECDSA(priv *ecdsa.PrivateKey, hash []byte, alg func() hash.Hash) (r, s *big.Int) {
-	c := priv.PublicKey.Curve
+	c := priv.Curve
 	N := c.Params().N
 
 	generateSecret(N, priv.D, alg, hash, func(k *big.Int, e *big.Int, t []byte) bool {
 		k.FillBytes(t)
-		r, _ = priv.Curve.ScalarBaseMult(t)
+		r, _ = priv.ScalarBaseMult(t)
 		r.Mod(r, N)
 
 		if r.Sign() == 0 {
